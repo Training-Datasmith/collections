@@ -52,21 +52,20 @@ use const ARRAY_FILTER_USE_BOTH;
 class ArrayCollection implements Collection, Selectable, Stringable
 {
     /**
-     * An array containing the entries of this collection.
-     *
-     * @phpstan-var array<TKey,T>
-     * @var mixed[]
-     */
-    private array $elements = [];
-
-    /**
      * Initializes a new ArrayCollection.
      *
      * @phpstan-param array<TKey,T> $elements
      */
-    public function __construct(array $elements = [])
+    public function __construct(
+        /**
+         * An array containing the entries of this collection.
+         *
+         * @phpstan-var array<TKey,T>
+         * @var mixed[]
+         */
+        private array $elements = []
+    )
     {
-        $this->elements = $elements;
     }
 
     #[Override]

@@ -31,12 +31,6 @@ use function str_starts_with;
  */
 final class ClosureExpressionVisitor extends ExpressionVisitor
 {
-    public function __construct(
-        // @phpstan-ignore property.onlyWritten (that property is deprecated, kept for BC)
-        private readonly bool $accessRawFieldValues = false,
-    ) {
-    }
-
     /**
      * Accesses the raw field value of a given object.
      *
@@ -192,6 +186,6 @@ final class ClosureExpressionVisitor extends ExpressionVisitor
     /** @param callable[] $expressions */
     private function notExpression(array $expressions): Closure
     {
-        return static fn (object $object) => ! $expressions[0]($object);
+        return static fn (object $object): bool => ! $expressions[0]($object);
     }
 }

@@ -24,7 +24,7 @@ abstract class AbstractLazyCollection implements Collection, Selectable
      *
      * @var Collection<TKey,T>|null
      */
-    protected Collection|null $collection;
+    protected Collection|null $collection = null;
 
     protected bool $initialized = false;
 
