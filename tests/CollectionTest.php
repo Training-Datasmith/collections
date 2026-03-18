@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Collections;
 
+use function count;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Value;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Deprecations\PHPUnit\VerifyDeprecations;
-use PHPUnit\Framework\Attributes\Group;
 
-use function count;
 use function is_string;
+
+use PHPUnit\Framework\Attributes\Group;
 
 class CollectionTest extends CollectionTestCase
 {

@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\Collections;
 
-use ArrayIterator;
-use Closure;
-use Doctrine\Common\Collections\Expr\ClosureExpressionVisitor;
-use Override;
-use Stringable;
-use Traversable;
-
 use function array_all;
 use function array_any;
 use function array_filter;
+
+use const ARRAY_FILTER_USE_BOTH;
+
 use function array_find;
 use function array_key_exists;
+
 use function array_keys;
 use function array_map;
 use function array_reduce;
@@ -23,17 +20,29 @@ use function array_reverse;
 use function array_search;
 use function array_slice;
 use function array_values;
+
+use ArrayIterator;
+use Closure;
+
 use function count;
 use function current;
+
+use Doctrine\Common\Collections\Expr\ClosureExpressionVisitor;
+
 use function end;
 use function in_array;
 use function key;
 use function next;
+
+use Override;
+
 use function reset;
 use function spl_object_hash;
-use function uasort;
 
-use const ARRAY_FILTER_USE_BOTH;
+use Stringable;
+use Traversable;
+
+use function uasort;
 
 /**
  * An ArrayCollection is a Collection implementation that wraps a regular PHP array.
@@ -64,8 +73,7 @@ class ArrayCollection implements Collection, Selectable, Stringable
          * @var mixed[]
          */
         private array $elements = []
-    )
-    {
+    ) {
     }
 
     #[Override]

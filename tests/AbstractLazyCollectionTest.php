@@ -6,15 +6,14 @@ namespace Doctrine\Tests\Common\Collections;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use LogicException;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 
 use function is_array;
+
 use function is_numeric;
 use function is_string;
+
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests for {@see AbstractLazyCollection}.

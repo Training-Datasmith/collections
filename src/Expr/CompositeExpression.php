@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\Collections\Expr;
 
-use Override;
-use RuntimeException;
-
 use function count;
+
+use Override;
+
+use RuntimeException;
 
 /**
  * Expression of Expressions combined by AND or OR operation.

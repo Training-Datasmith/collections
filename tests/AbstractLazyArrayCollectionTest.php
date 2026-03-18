@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Collections;
 
+use function assert;
+
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
 
-use function assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests for {@see AbstractLazyCollection}.

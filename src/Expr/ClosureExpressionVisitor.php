@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Doctrine\Common\Collections\Expr;
 
-use Closure;
-use Doctrine\Deprecations\Deprecation;
-use Override;
-use ReflectionClass;
-use RuntimeException;
-
 use function array_all;
 use function array_any;
+
+use Closure;
+use Doctrine\Deprecations\Deprecation;
+
 use function explode;
+
 use function func_num_args;
 use function in_array;
 use function is_array;
 use function is_scalar;
 use function iterator_to_array;
+
+use Override;
+use ReflectionClass;
+use RuntimeException;
+
 use function sprintf;
 use function str_contains;
 use function str_ends_with;

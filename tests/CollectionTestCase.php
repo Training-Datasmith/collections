@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Collections;
 
+use function count;
+
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
-use PHPUnit\Framework\TestCase;
 
-use function count;
 use function is_array;
 use function is_numeric;
 use function is_string;
+
+use PHPUnit\Framework\TestCase;
+
 use function sprintf;
 
 abstract class CollectionTestCase extends TestCase

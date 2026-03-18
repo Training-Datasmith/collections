@@ -4,22 +4,26 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\Common\Collections;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Order;
-use Doctrine\Common\Collections\Selectable;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\IgnoreDeprecations;
-use PHPUnit\Framework\TestCase;
-
 use function array_keys;
 use function array_search;
 use function array_values;
 use function count;
 use function current;
+
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+
+use Doctrine\Common\Collections\Order;
+use Doctrine\Common\Collections\Selectable;
+
 use function end;
 use function key;
 use function next;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\TestCase;
+
 use function reset;
 
 abstract class ArrayCollectionTestCase extends TestCase
