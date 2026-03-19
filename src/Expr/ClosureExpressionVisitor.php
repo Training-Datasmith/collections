@@ -26,6 +26,7 @@ use function sprintf;
 use function str_contains;
 use function str_ends_with;
 use function str_starts_with;
+use function substr_count;
 
 /**
  * Walks an expression graph and turns it into a PHP closure.
@@ -52,6 +53,10 @@ final class ClosureExpressionVisitor extends ExpressionVisitor
         }
 
         if (str_contains($field, '.')) {
+            if (substr_count($field, '.') > 10) {
+                throw new RuntimeException('Field path depth exceeds maximum allowed nesting of 10 levels.');
+            }
+
             [$field, $subField] = explode('.', $field, 2);
             $object             = self::getObjectFieldValue($object, $field);
 
