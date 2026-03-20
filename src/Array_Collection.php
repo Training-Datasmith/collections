@@ -36,14 +36,25 @@ use function uasort;
  *
  * Warning: Using (un-)serialize() on a collection is not a supported use-case
  * and may break when we change the internals in the future. If you need to
- * serialize a collection use {@link toArray()} and reconstruct the collection
+ * serialize a collection use {@link to_array()} and reconstruct the collection
  * manually.
+ *
+ * Performance notes:
+ * - contains() and index_of() are O(n) linear scans. Prefer keyed access via
+ *   contains_key() / get() for collections with known keys.
+ * - matching() applies filter + sort in two passes: O(n) for filter, O(n log n)
+ *   for sort. For large collections backed by a database, implement a custom
+ *   Selectable that pushes the query to SQL.
+ * - map() and filter() allocate a new collection. Chaining them naively is O(n*k)
+ *   where k is the number of chained operations; use reduce() for complex pipelines.
  *
  * @phpstan-template TKey of array-key
  * @phpstan-template T
  * @template-implements Collection<TKey,T>
  * @template-implements Selectable<TKey,T>
  * @phpstan-consistent-constructor
+ *
+ * @since 1.0
  */
 class Array_Collection implements Collection, Selectable, Stringable
 {
@@ -182,6 +193,15 @@ class Array_Collection implements Collection, Selectable, Stringable
     {
         return isset($this->elements[$key]) || array_key_exists($key, $this->elements);
     }
+    /**
+     * Checks whether $element is present in the collection using strict equality.
+     *
+     * @complexity O(n) — performs a full linear scan of the internal array.
+     *             For frequent membership tests, consider using a keyed structure
+     *             and contains_key() instead.
+     *
+     * @see contains_key() For O(1) keyed existence checks.
+     */
     #[Override]
     public function contains(mixed $element): bool
     {
@@ -193,11 +213,19 @@ class Array_Collection implements Collection, Selectable, Stringable
         return array_any($this->elements, static fn(mixed $element, mixed $key): bool => (bool) $p($key, $element));
     }
     /**
+     * Returns the key of the first occurrence of $element, or false if not found.
+     *
+     * Uses strict comparison (===). For objects this means identity equality.
+     *
+     * @complexity O(n) — scans the full array in the worst case.
+     *
      * @phpstan-param TMaybeContained $element
      *
      * @phpstan-return (TMaybeContained is T ? TKey|false : false)
      *
      * @template TMaybeContained
+     *
+     * @see contains() For a boolean membership check.
      */
     #[Override]
     public function index_of(mixed $element): int|string|false
@@ -323,7 +351,20 @@ class Array_Collection implements Collection, Selectable, Stringable
     {
         return array_slice($this->elements, $offset, $length, true);
     }
-    /** @phpstan-return Collection<TKey, T>&Selectable<TKey,T> */
+    /**
+     * Selects elements matching the given Criteria and returns a new collection.
+     *
+     * Evaluation order:
+     *   1. Filter  — O(n) closure scan if a WHERE expression is present.
+     *   2. Sort    — O(n log n) uasort if orderings are specified.
+     *   3. Slice   — O(n) array_slice for first_result / max_results pagination.
+     *
+     * @complexity O(n log n) overall when both filter and sort are applied.
+     *
+     * @see Criteria For building expressions, orderings, and pagination.
+     *
+     * @phpstan-return Collection<TKey, T>&Selectable<TKey,T>
+     */
     #[Override]
     public function matching(Criteria $criteria): Collection
     {

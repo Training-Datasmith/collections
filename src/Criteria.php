@@ -8,9 +8,25 @@ use Doctrine\Common\Collections\Expr\Expression;
 use Doctrine\Deprecations\Deprecation;
 use function func_num_args;
 /**
- * Criteria for filtering Selectable collections.
+ * Criteria for filtering, sorting, and paginating Selectable collections.
+ *
+ * A Criteria is a backend-independent query description. The same instance can be
+ * applied to an in-memory Array_Collection (via Closure_Expression_Visitor) or
+ * translated to a SQL/DQL WHERE clause by ORM/ODM implementations of Selectable.
+ *
+ * Typical usage:
+ * <code>
+ *   $criteria = Criteria::create()
+ *       ->where(Criteria::expr()->eq('status', 'active'))
+ *       ->order_by(['created_at' => Order::Descending])
+ *       ->set_first_result(0)
+ *       ->set_max_results(20);
+ *
+ *   $results = $collection->matching($criteria);
+ * </code>
  *
  * @phpstan-consistent-constructor
+ * @since 1.0
  */
 final class Criteria
 {
@@ -20,7 +36,14 @@ final class Criteria
     private int|null $first_result = null;
     private int|null $max_results = null;
     /**
-     * Creates an instance of the class.
+     * Factory method that creates a new empty Criteria instance.
+     *
+     * Equivalent to `new static()` but allows fluent chaining:
+     * `Criteria::create()->where(...)`.
+     *
+     * @return static A new Criteria with no expression, no orderings, first_result=0, max_results=null.
+     *
+     * @since 1.0
      */
     public static function create(): static
     {
@@ -30,7 +53,16 @@ final class Criteria
         return new static();
     }
     /**
-     * Returns the expression builder.
+     * Returns the shared Expression_Builder instance.
+     *
+     * The builder is a stateless singleton; it is safe to use the same instance
+     * across multiple threads (PHP is single-threaded) and across requests.
+     *
+     * @return Expression_Builder The shared expression builder.
+     *
+     * @see Expression_Builder For the full list of available comparison methods.
+     *
+     * @since 1.0
      */
     public static function expr(): Expression_Builder
     {
@@ -135,30 +167,45 @@ final class Criteria
         return $this->first_result;
     }
     /**
-     * Set the number of first result that this Criteria should return.
+     * Sets the zero-based offset of the first result to return.
      *
-     * @param int $firstResult The value to set.
+     * Combined with set_max_results(), this enables cursor-style pagination over
+     * a Selectable collection.
+     *
+     * @param int $first_result The zero-based offset (0 = start from the first element).
      *
      * @return $this
+     *
+     * @since 1.0
      */
     public function set_first_result(int $first_result): static
     {
         $this->first_result = $first_result;
         return $this;
     }
+
     /**
-     * Gets maxResults.
+     * Returns the maximum number of results to return, or null for no limit.
+     *
+     * @return int|null The current max_results setting.
+     *
+     * @since 1.0
      */
     public function get_max_results(): int|null
     {
         return $this->max_results;
     }
+
     /**
-     * Sets maxResults.
+     * Sets the maximum number of results this Criteria should return.
      *
-     * @param int|null $maxResults The value to set.
+     * Pass null to remove the limit and return all matching elements.
+     *
+     * @param int|null $max_results Maximum result count, or null for unlimited.
      *
      * @return $this
+     *
+     * @since 1.0
      */
     public function set_max_results(int|null $max_results): static
     {

@@ -24,15 +24,37 @@ use function substr_count;
 /**
  * Walks an expression graph and turns it into a PHP closure.
  *
- * This closure can be used with {@Collection#filter()} and is used internally
- * by {@ArrayCollection#select()}.
+ * This closure can be used with {@see Readable_Collection::filter()} and is used internally
+ * by {@see Array_Collection::matching()}.
+ *
+ * Security note: dotted field paths (e.g. "address.city") are traversed recursively.
+ * To prevent stack exhaustion from adversarial input the recursion depth is capped at 10
+ * levels. Paths exceeding this limit throw a RuntimeException.
+ *
+ * @since 1.0
  */
 final class Closure_Expression_Visitor extends Expression_Visitor
 {
     /**
-     * Accesses the raw field value of a given object.
+     * Accesses the raw field value of a given object or array using an optionally
+     * dotted field path.
      *
-     * @param object|mixed[] $object
+     * Dotted paths (e.g. "address.city") are resolved recursively. The traversal
+     * depth is capped at 10 levels to prevent stack overflow from adversarial input.
+     *
+     * For plain objects, reflection is used to access private/protected properties.
+     * For arrays, standard key access is used.
+     *
+     * @complexity O(d) where d is the number of dot-separated path segments (capped at 10).
+     *
+     * @param object|mixed[] $object The object or array to read from.
+     * @param string         $field  The field name or dotted path (e.g. "user.address.city").
+     *
+     * @return mixed The resolved field value.
+     *
+     * @throws RuntimeException If the field path exceeds 10 levels or the field does not exist.
+     *
+     * @since 1.0
      */
     public static function get_object_field_value(object|array $object, string $field): mixed
     {
@@ -61,7 +83,24 @@ final class Closure_Expression_Visitor extends Expression_Visitor
         return $property->get_raw_value($object);
     }
     /**
-     * Helper for sorting arrays of objects based on multiple fields + orientations.
+     * Returns a comparison Closure suitable for use with uasort() that sorts by
+     * the given field name and optional secondary comparator.
+     *
+     * Chaining sort keys: pass the result of a previous sort_by_field() call as
+     * $next to build a multi-level sort (last-applied field has lowest priority).
+     *
+     * @param string       $name        The field name to sort by (dotted paths supported).
+     * @param int          $orientation 1 for ascending, -1 for descending.
+     * @param Closure|null $next        An optional secondary comparator applied when field values are equal.
+     *
+     * @return Closure A callable(mixed $a, mixed $b): int suitable for uasort().
+     *
+     * @complexity O(d) per comparison where d is the depth of the dotted field path.
+     *
+     * @see get_object_field_value() For field resolution semantics.
+     * @see Array_Collection::matching() For how this is used in multi-field ordering.
+     *
+     * @since 1.0
      */
     public static function sort_by_field(string $name, int $orientation = 1, Closure|null $next = null): Closure
     {
