@@ -1,15 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Doctrine\Common\Collections;
 
-use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Expr\Composite_Expression;
 use Doctrine\Common\Collections\Expr\Expression;
 use Doctrine\Deprecations\Deprecation;
-
 use function func_num_args;
-
 /**
  * Criteria for filtering Selectable collections.
  *
@@ -17,73 +14,48 @@ use function func_num_args;
  */
 final class Criteria
 {
-    private static ExpressionBuilder|null $expressionBuilder = null;
-
+    private static Expression_Builder|null $expression_builder = null;
     /** @var array<string, Order> */
     private array $orderings = [];
-
-    private int|null $firstResult = null;
-    private int|null $maxResults  = null;
-
+    private int|null $first_result = null;
+    private int|null $max_results = null;
     /**
      * Creates an instance of the class.
      */
     public static function create(): static
     {
         if (func_num_args() === 1) {
-            Deprecation::trigger(
-                'doctrine/collections',
-                'https://github.com/doctrine/collections/pull/486',
-                'The `accessRawFieldValues` parameter passed to %s is deprecated and a no-op. You can remove it.',
-                __METHOD__,
-            );
+            Deprecation::trigger('doctrine/collections', 'https://github.com/doctrine/collections/pull/486', 'The `accessRawFieldValues` parameter passed to %s is deprecated and a no-op. You can remove it.', __METHOD__);
         }
-
         return new static();
     }
-
     /**
      * Returns the expression builder.
      */
-    public static function expr(): ExpressionBuilder
+    public static function expr(): Expression_Builder
     {
-        if (self::$expressionBuilder === null) {
-            self::$expressionBuilder = new ExpressionBuilder();
+        if (self::$expression_builder === null) {
+            self::$expression_builder = new Expression_Builder();
         }
-
-        return self::$expressionBuilder;
+        return self::$expression_builder;
     }
-
     /**
      * Construct a new Criteria.
      *
      * @param array<string, Order>|null $orderings
      */
-    public function __construct(
-        private Expression|null $expression = null,
-        array|null $orderings = null,
-        int $firstResult = 0,
-        int|null $maxResults = null,
-    ) {
+    public function __construct(private Expression|null $expression = null, array|null $orderings = null, int $first_result = 0, int|null $max_results = null)
+    {
         if (func_num_args() === 5) {
-            Deprecation::trigger(
-                'doctrine/collections',
-                'https://github.com/doctrine/collections/pull/486',
-                'The `accessRawFieldValues` parameter passed to %s is deprecated and a no-op. You can remove it.',
-                __METHOD__,
-            );
+            Deprecation::trigger('doctrine/collections', 'https://github.com/doctrine/collections/pull/486', 'The `accessRawFieldValues` parameter passed to %s is deprecated and a no-op. You can remove it.', __METHOD__);
         }
-
-        $this->setFirstResult($firstResult);
-        $this->setMaxResults($maxResults);
-
+        $this->set_first_result($first_result);
+        $this->set_max_results($max_results);
         if ($orderings === null) {
             return;
         }
-
-        $this->orderBy($orderings);
+        $this->order_by($orderings);
     }
-
     /**
      * Sets the where expression to evaluate when this Criteria is searched for.
      *
@@ -92,58 +64,43 @@ final class Criteria
     public function where(Expression $expression): static
     {
         $this->expression = $expression;
-
         return $this;
     }
-
     /**
      * Appends the where expression to evaluate when this Criteria is searched for
      * using an AND with previous expression.
      *
      * @return $this
      */
-    public function andWhere(Expression $expression): static
+    public function and_where(Expression $expression): static
     {
         if ($this->expression === null) {
             return $this->where($expression);
         }
-
-        $this->expression = new CompositeExpression(
-            CompositeExpression::TYPE_AND,
-            [$this->expression, $expression],
-        );
-
+        $this->expression = new Composite_Expression(Composite_Expression::TYPE_AND, [$this->expression, $expression]);
         return $this;
     }
-
     /**
      * Appends the where expression to evaluate when this Criteria is searched for
      * using an OR with previous expression.
      *
      * @return $this
      */
-    public function orWhere(Expression $expression): static
+    public function or_where(Expression $expression): static
     {
         if ($this->expression === null) {
             return $this->where($expression);
         }
-
-        $this->expression = new CompositeExpression(
-            CompositeExpression::TYPE_OR,
-            [$this->expression, $expression],
-        );
-
+        $this->expression = new Composite_Expression(Composite_Expression::TYPE_OR, [$this->expression, $expression]);
         return $this;
     }
-
     /**
      * Gets the expression attached to this Criteria.
      */
-    public function getWhereExpression(): Expression|null
+    public function get_where_expression(): Expression|null
     {
         return $this->expression;
     }
-
     /**
      * Gets the current orderings of this Criteria.
      *
@@ -153,7 +110,6 @@ final class Criteria
     {
         return $this->orderings;
     }
-
     /**
      * Sets the ordering of the result of this Criteria.
      *
@@ -166,21 +122,18 @@ final class Criteria
      *
      * @return $this
      */
-    public function orderBy(array $orderings): static
+    public function order_by(array $orderings): static
     {
         $this->orderings = $orderings;
-
         return $this;
     }
-
     /**
      * Gets the current first result option of this Criteria.
      */
-    public function getFirstResult(): int|null
+    public function get_first_result(): int|null
     {
-        return $this->firstResult;
+        return $this->first_result;
     }
-
     /**
      * Set the number of first result that this Criteria should return.
      *
@@ -188,21 +141,18 @@ final class Criteria
      *
      * @return $this
      */
-    public function setFirstResult(int $firstResult): static
+    public function set_first_result(int $first_result): static
     {
-        $this->firstResult = $firstResult;
-
+        $this->first_result = $first_result;
         return $this;
     }
-
     /**
      * Gets maxResults.
      */
-    public function getMaxResults(): int|null
+    public function get_max_results(): int|null
     {
-        return $this->maxResults;
+        return $this->max_results;
     }
-
     /**
      * Sets maxResults.
      *
@@ -210,10 +160,9 @@ final class Criteria
      *
      * @return $this
      */
-    public function setMaxResults(int|null $maxResults): static
+    public function set_max_results(int|null $max_results): static
     {
-        $this->maxResults = $maxResults;
-
+        $this->max_results = $max_results;
         return $this;
     }
 }

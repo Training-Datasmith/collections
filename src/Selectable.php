@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Doctrine\Common\Collections;
 
 /**
@@ -28,5 +27,5 @@ interface Selectable
      * @return ReadableCollection<mixed>&Selectable<mixed>
      * @phpstan-return ReadableCollection<TKey,T>&Selectable<TKey,T>
      */
-    public function matching(Criteria $criteria): ReadableCollection;
+    public function matching(Criteria $criteria): Readable_Collection;
 }

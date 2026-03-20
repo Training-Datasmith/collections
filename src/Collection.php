@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Doctrine\Common\Collections;
 
 use ArrayAccess;
 use Closure;
 use Override;
-
 /**
  * The missing (SPL) Collection/Array/OrderedMap interface.
  *
@@ -30,7 +28,7 @@ use Override;
  * @template-extends ReadableCollection<TKey, T>
  * @template-extends ArrayAccess<TKey, T>
  */
-interface Collection extends ReadableCollection, ArrayAccess
+interface Collection extends Readable_Collection, ArrayAccess
 {
     /**
      * Adds an element at the end of the collection.
@@ -39,12 +37,10 @@ interface Collection extends ReadableCollection, ArrayAccess
      * @phpstan-param T $element
      */
     public function add(mixed $element): void;
-
     /**
      * Clears the collection, removing all elements.
      */
     public function clear(): void;
-
     /**
      * Removes the element at the specified index from the collection.
      *
@@ -55,7 +51,6 @@ interface Collection extends ReadableCollection, ArrayAccess
      * @phpstan-return T|null
      */
     public function remove(string|int $key): mixed;
-
     /**
      * Removes the specified element from the collection, if it is found.
      *
@@ -64,8 +59,7 @@ interface Collection extends ReadableCollection, ArrayAccess
      *
      * @return bool TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeElement(mixed $element): bool;
-
+    public function remove_element(mixed $element): bool;
     /**
      * Sets an element in the collection at the specified key/index.
      *
@@ -75,7 +69,6 @@ interface Collection extends ReadableCollection, ArrayAccess
      * @phpstan-param T $value
      */
     public function set(string|int $key, mixed $value): void;
-
     /**
      * @phpstan-param Closure(T):U $func
      *
@@ -86,7 +79,6 @@ interface Collection extends ReadableCollection, ArrayAccess
      */
     #[Override]
     public function map(Closure $func): self;
-
     /**
      * @phpstan-param Closure(T, TKey):bool $p
      *
@@ -95,7 +87,6 @@ interface Collection extends ReadableCollection, ArrayAccess
      */
     #[Override]
     public function filter(Closure $p): self;
-
     /**
      * @phpstan-param Closure(TKey, T):bool $p
      *
